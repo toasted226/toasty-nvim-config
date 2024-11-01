@@ -1,3 +1,4 @@
+:set relativenumber
 :set tabstop=4
 :set shiftwidth=4
 
@@ -12,20 +13,23 @@ Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-cmdline'
 Plug 'hrsh7th/nvim-cmp'
 
+Plug 'hrsh7th/cmp-vsnip'
+Plug 'hrsh7th/vim-vsnip'
+
 Plug 'https://github.com/rafi/awesome-vim-colorschemes'
 Plug 'https://github.com/vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
+
+Plug 'loctvl842/monokai-pro.nvim'
 
 Plug 'nvim-lua/plenary.nvim'
 Plug 'BurntSushi/ripgrep'
 Plug 'nvim-tree/nvim-web-devicons'
 Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.8' }
 
-Plug 'https://github.com/cocopon/iceberg.vim'
-
 call plug#end()
 
-:colorscheme iceberg
+:colorscheme monokai-pro
 
 nnoremap <silent> <leader>ff :lua require('telescope.builtin').find_files()<CR>
 nnoremap <silent> <leader>fr :lua require('telescope.builtin').oldfiles()<CR>
@@ -40,7 +44,7 @@ local cmp = require'cmp'
 cmp.setup({
 	snippet = {
 		expand = function(args)
-			vim.snippet.expand(args.body)
+			vim.fn["vsnip#anonymous"](args.body)
 		end,
 	},
 	window = {
@@ -51,10 +55,14 @@ cmp.setup({
 		['<C-f>'] = cmp.mapping.scroll_docs(4),
 		['<C-Space>'] = cmp.mapping.complete(),
 		['<C-e>'] = cmp.mapping.abort(),
+		['<C-n>'] = cmp.mapping.select_next_item(),
+		['<C-p>'] = cmp.mapping.select_prev_item(),
 		['<CR>'] = cmp.mapping.confirm({ select = true }),
+		['<Tab>'] = cmp.mapping.confirm({ select = true }),
 	}),
 	sources = cmp.config.sources({
-		{ name = 'nvim_lsp' }
+		{ name = 'nvim_lsp' },
+		{ name = 'vsnip' },
 	}, {
 		{ name = 'buffer' }	
 	})
