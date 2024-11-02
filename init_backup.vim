@@ -18,9 +18,6 @@ Plug 'hrsh7th/vim-vsnip'
 
 Plug 'nvim-treesitter/nvim-treesitter', { 'do': ':TSUpdate' }
 
-Plug 'williamboman/mason.nvim'
-Plug 'williamboman/mason-lspconfig.nvim'
-
 Plug 'https://github.com/rafi/awesome-vim-colorschemes'
 Plug 'https://github.com/vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
@@ -45,36 +42,8 @@ nnoremap <silent> <leader>pf :lua vim.lsp.buf.format { async = true }<CR>
 nnoremap <leader>t :terminal powershell<CR>
 
 lua << EOF
-
--- Mason config
-require('mason').setup()
-require('mason-lspconfig').setup {
-	ensure_installed = { "gopls", "pyright", "ts_ls", "rust_analyzer" },
-	automatic_installation = true,
-}
-
-local lspconfig = require('lspconfig')
-local capabilities = require('cmp_nvim_lsp').default_capabilities()
-local on_attach = function(client, bufnr)
-	-- LSP keybindings
-end
-
--- This will handle all servers managed by mason-lspconfig
-require('mason-lspconfig').setup_handlers {
-    function(server_name)
-        lspconfig[server_name].setup {
-            capabilities = capabilities,
-            on_attach = on_attach,
-        }
-    end,
-}
-
----------------
-
--- Treesitter config
-
 require'nvim-treesitter.configs'.setup {
-	ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline", "go", "rust", "python", "typescript" },
+	ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline", "go", "rust" },
 	sync_install = false,
 	auto_install = true,
 
@@ -84,10 +53,6 @@ require'nvim-treesitter.configs'.setup {
 		additional_vim_regex_highlighting = false,
 	},
 }
-
----------------
-
--- cmp config
 
 local cmp = require'cmp'
 
@@ -136,27 +101,21 @@ cmp.setup.cmdline(':', {
 	matching = { disallow_symbol_nonprefix_matching = false }
 })
 
+-- Set up lspconfig.
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
+-- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
+require('lspconfig')['gopls'].setup {
+capabilities = capabilities
+}
+
+require'lspconfig'.gopls.setup{
+	cmd = { "gopls" },
+	settings = {
+		gopls = {
+			usePlaceholders = true,
+			completeUnimported = true,
+		},
+	},
+}
 EOF
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
